@@ -13,12 +13,3 @@ node02.local
 node03.local
 node04.local
 node05.local
-
-[all:vars]
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-
-[master:vars]
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-
-[nodes:vars]
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'
