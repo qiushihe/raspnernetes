@@ -1,0 +1,24 @@
+[all]
+node01.local name=node01 host_extra="master"
+node02.local name=node02
+node03.local name=node03
+node04.local name=node04
+node05.local name=node05
+
+[master]
+node01.local
+
+[nodes]
+node02.local
+node03.local
+node04.local
+node05.local
+
+[all:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+[master:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+[nodes:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
