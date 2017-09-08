@@ -1,0 +1,16 @@
+---
+- name: Regular nodes setup
+  hosts: nodes
+  remote_user: pirate
+  become: true
+  become_method: sudo
+  gather_facts: yes
+  tasks:
+    - name: Register join token as fact
+      set_fact:
+        join_token: "{{ lookup('file', playbook_dir + '/join-token.run') }}"
+    - name: Register master IP as fact
+      set_fact:
+        master_ip: "{{ lookup('file', playbook_dir + '/master-ip.run') }}"
+    - name: Join cluster
+      command: kubeadm join --token={{ join_token }} {{ master_ip }}:6443

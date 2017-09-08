@@ -1,0 +1,40 @@
+---
+- name: Master node setup
+  hosts: master
+  remote_user: pirate
+  become: true
+  become_method: sudo
+  gather_facts: yes
+  tasks:
+    - name: Determine Docker cgroup setting
+      shell: docker info | grep -i cgroup | sed 's/^[^:]*:\s\(.*\)$/\1/'
+      register: docker_cgroup
+    - debug:
+        msg: "Docker cgroup: {{ docker_cgroup.stdout }}"
+    - name: Correct potentially incorrect kubelet cgroup parameter
+      replace:
+        path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+        regexp: '^(Environment="KUBELET_CGROUP_ARGS=--cgroup-driver).*$'
+        replace: '\1={{ docker_cgroup.stdout }}"'
+    - name: Restart kubelet service
+      shell: systemctl daemon-reload && service kubelet restart
+    - name: Initialize cluster with kubeadm
+      shell: kubeadm init
+    - name: Copy kubernetes config
+      shell: mkdir -p $HOME/.kube && cp -i /etc/kubernetes/admin.conf $HOME/.kube/config && chown $(id -u):$(id -g) $HOME/.kube/config
+    - name: Determine Kubernetes version in base64
+      shell: kubectl version | base64 | tr -d '\n'
+      register: kubernetes_version
+    - name: Setup pod networking
+      shell: kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version={{ kubernetes_version.stdout }}"
+    - name: Obtain cluster joining token
+      shell: kubeadm token list | tail -n 1 | awk '{ print $1 }'
+      register: kubernetes_join_token
+    - name: Copy token back out
+      become: no
+      copy: content={{ kubernetes_join_token.stdout }} dest={{ playbook_dir }}/join-token.run
+      delegate_to: localhost
+    - name: Store master node IP
+      become: no
+      copy: content={{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} dest={{ playbook_dir }}/master-ip.run
+      delegate_to: localhost

@@ -41,5 +41,17 @@ $ ansible all --inventory-file=./hosts --user=pirate --ask-pass \
 ### Basic setup on all nodes
 
 ```
-$ ansible-playbook --inventory-file=./hosts --ask-pass ./playbooks/basic-setup.yml
+$ ansible-playbook --inventory-file=./hosts --ask-pass ./playbooks/basic.yml
+```
+
+### Setup master node
+
+```
+$ ansible-playbook --inventory-file=./hosts --ask-pass ./playbooks/master.yml
+```
+
+### Setup other nodes
+
+```
+$ ansible-playbook --inventory-file=./hosts --ask-pass ./playbooks/nodes.yml
 ```
