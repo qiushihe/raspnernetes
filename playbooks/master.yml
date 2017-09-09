@@ -49,10 +49,10 @@
       shell: kubeadm token list | tail -n 1 | awk '{ print $1 }'
       register: kubernetes_join_token
     - name: Copy token back out
-      copy: content={{ kubernetes_join_token.stdout }} dest={{ playbook_dir }}/join-token.run
+      copy: content={{ kubernetes_join_token.stdout }} dest={{ playbook_dir }}/../run/join-token.run
       become: no
       delegate_to: localhost
     - name: Copy master IP back out
-      copy: content={{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} dest={{ playbook_dir }}/master-ip.run
+      copy: content={{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} dest={{ playbook_dir }}/../run/master-ip.run
       become: no
       delegate_to: localhost
