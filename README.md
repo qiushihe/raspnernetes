@@ -38,20 +38,8 @@ $ ansible all --inventory-file=./hosts --user=pirate --ask-pass \
   --module-name=shell --args="dbus-uuidgen > /etc/machine-id"
 ```
 
-### Basic setup on all nodes
+### Setup cluster
 
 ```
-$ ansible-playbook --inventory-file=./hosts --ask-pass ./playbooks/basic.yml
-```
-
-### Setup master node
-
-```
-$ ansible-playbook --inventory-file=./hosts --ask-pass ./playbooks/master.yml
-```
-
-### Setup other nodes
-
-```
-$ ansible-playbook --inventory-file=./hosts --ask-pass ./playbooks/nodes.yml
+$ ansible-playbook --inventory-file=./hosts --ask-pass ./playbooks/setup-cluster.yml
 ```

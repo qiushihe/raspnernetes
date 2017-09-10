@@ -1,0 +1,24 @@
+---
+- name: Wait for join token
+  wait_for:
+    path: "{{ playbook_dir }}/../run/join-token.run"
+  become: no
+  delegate_to: localhost
+- name: Wait for master IP
+  wait_for:
+    path: "{{ playbook_dir }}/../run/master-ip.run"
+  become: no
+  delegate_to: localhost
+- name: Register join token as fact
+  set_fact:
+    join_token: "{{ lookup('file', playbook_dir + '/../run/join-token.run') }}"
+- name: Register master IP as fact
+  set_fact:
+    master_ip: "{{ lookup('file', playbook_dir + '/../run/master-ip.run') }}"
+- name: Check if this node has already joined a Kubernetes cluster
+  stat:
+    path: /etc/kubernetes/kubelet.conf
+  register: kubelet_conf
+- name: Join cluster
+  command: kubeadm join --token={{ join_token }} {{ master_ip }}:6443
+  when: kubelet_conf.stat.exists == False

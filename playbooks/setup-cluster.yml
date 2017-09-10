@@ -1,0 +1,21 @@
+---
+- name: Common setup on all nodes
+  hosts: all
+  remote_user: pirate
+  become: true
+  roles:
+    - role: common
+
+- name: Setup Kubernetes master
+  hosts: master
+  remote_user: pirate
+  become: true
+  roles:
+    - role: master
+
+- name: Setup Kubernetes workers
+  hosts: nodes
+  remote_user: pirate
+  become: true
+  roles:
+    - role: worker
