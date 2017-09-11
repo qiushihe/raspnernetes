@@ -15,32 +15,14 @@ spec:
     metadata:
       labels:
         k8s-app: traefik-ingress-controller
-      annotations:
-        scheduler.alpha.kubernetes.io/tolerations: |
-          [
-            {
-              "key": "dedicated",
-              "operator": "Equal",
-              "value": "master",
-              "effect": "NoSchedule"
-            }
-          ]
     spec:
-      terminationGracePeriodSeconds: 60
-      hostNetwork: true
       nodeSelector:
         nginx-controller: "traefik"
+      hostNetwork: true
       serviceAccount: "traefik-ingress-controller"
       containers:
       - image: hypriot/rpi-traefik
         name: traefik-ingress-controller
-        resources:
-          limits:
-            cpu: 200m
-            memory: 30Mi
-          requests:
-            cpu: 100m
-            memory: 20Mi
         ports:
         - name: http
           containerPort: 80
